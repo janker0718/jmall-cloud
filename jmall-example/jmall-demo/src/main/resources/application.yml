@@ -1,0 +1,7 @@
+jmall:
+  swagger:
+    enabled: true
+    title: jmall-demo
+    description: 测试项目接口文档
+    version: 1.0
+    base-package: top.janker.jmall.demo.controller
