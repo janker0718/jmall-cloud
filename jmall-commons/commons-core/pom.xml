@@ -5,17 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>top.janker</groupId>
-        <artifactId>jmall-cloud</artifactId>
+        <artifactId>jmall-commons</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>commons</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>commons-core</module>
-        <module>redis-spring-boot-starter</module>
-        <module>swagger2-spring-boot-starter</module>
-    </modules>
+    <artifactId>commons-core</artifactId>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
