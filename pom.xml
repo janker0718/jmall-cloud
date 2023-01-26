@@ -11,6 +11,7 @@
     <modules>
         <module>jmall-commons</module>
         <module>jmall-example</module>
+        <module>jmall-feign-api</module>
     </modules>
 
     <properties>

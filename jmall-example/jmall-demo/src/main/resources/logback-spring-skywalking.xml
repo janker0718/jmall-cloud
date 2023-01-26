@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<included>
+    <!-- 定义日志 mdc 配置 -->
+    <springProperty name="LOG_MDC" source="log.mdc" defaultValue="%tid %5p" />
+    <springProperty name="LOG_SKYWALKING_LEVEL" source="log.skywalking.level" defaultValue="INFO" />
+    <property name="LOG_LEVEL_PATTERN" value="${LOG_MDC}" />
+
+    <!-- 引入 spring 默认配置文件 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+    <!-- 输出 skywalking 日志 -->
+    <appender name="SKYWALKING"
+              class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
+        <!-- 日志输出编码 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </layout>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${LOG_SKYWALKING_LEVEL}</level>
+        </filter>
+    </appender>
+
+    <!-- dev 环境不允许使用 -->
+    <springProfile name="!dev">
+        <root level="${LOG_SKYWALKING_LEVEL}">
+            <appender-ref ref="SKYWALKING" />
+        </root>
+    </springProfile>
+
+</included>
