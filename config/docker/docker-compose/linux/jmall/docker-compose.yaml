@@ -1,0 +1,219 @@
+version: "3"
+services:
+  jmall-cloud-mysql:
+    image: mysql:8.0
+    container_name: jmall-cloud-mysql-8.0
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - ./mysql/initdb:/docker-entrypoint-initdb.d
+      - ./mysql/mysql-files:/var/lib/mysql-files
+
+  minio:
+    image: minio/minio:RELEASE.2021-06-17T00-10-46Z
+    container_name: minio
+    restart: always
+    command: server /data
+    ports:
+      - 9000:9000
+    volumes:
+      - ./minio/data:/data
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin123456
+
+  redis:
+    image: redis:6.2
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+
+  # nacos
+  nacos:
+    image: nacos/nacos-server:v2.2.0
+    container_name: nacos
+    restart: always
+    depends_on:
+      - jmall-cloud-mysql
+    hostname: nacos
+    environment:
+      - JVM_XMS=256m
+      - JVM_XMX=256m
+      - MODE=standalone
+      - PREFER_HOST_MODE=hostname
+      - SPRING_DATASOURCE_PLATFORM=mysql
+      - MYSQL_SERVICE_HOST=192.168.31.164
+      - MYSQL_SERVICE_DB_NAME=nacos_config
+      - MYSQL_SERVICE_USER=root
+      - MYSQL_SERVICE_PASSWORD=root
+    volumes:
+      - ./nacos/data:/home/nacos/data
+      - ./nacos/logs:/home/nacos/logs
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+
+  seata:
+    image: seataio/seata-server:1.6.1
+    container_name: seata-server
+    restart: always
+    depends_on:
+      - jmall-cloud-mysql
+      - nacos
+    ports:
+      - 8091:8091
+    environment:
+      - SEATA_IP=192.168.31.164
+      - SEATA_CONFIG_NAME=file:/root/seata-config/registry
+    volumes:
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/localtime"        #设置系统时区
+      - "/usr/share/zoneinfo/Asia/Shanghai:/etc/timezone"  #设置时区
+      # 假设我们通过docker cp命令把资源文件拷贝到相对路径`./seata-server/resources`中
+      # 如有问题，请阅读上面的[注意事项]以及[使用自定义配置文件]
+      - ./seata/resources:/seata-server/resources
+
+
+  # Sentinel
+  sentinel:
+    image: janker0718/sentinel-dashboard:1.8.6
+    container_name: sentinel-dashboard
+    environment:
+      SENTINEL_ADMIN_USERNAME: sentinel
+      SENTINEL_ADMIN_PASSWORD: sentinel
+    ports:
+      - "8858:8858"
+
+  # elasticsearch
+  elasticsearch:
+    image: elasticsearch:7.13.4
+    container_name: elasticsearch
+    privileged: true
+    user: root
+    environment:
+      #设置集群名称为elasticsearch
+      - cluster.name=elasticsearch
+      #以单一节点模式启动
+      - discovery.type=single-node
+      #设置使用jvm内存大小
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - /usr/local/docker-volumes/elk/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /usr/local/docker-volumes/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+      - /usr/local/docker-volumes/elasticsearch/data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  # logstash
+  logstash:
+    image: logstash:7.13.4
+    container_name: logstash
+    ports:
+      - 4560:4560
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      #挂载logstash的配置文件
+      - /usr/local/docker-volumes/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+    links:
+      #可以用 elasticsearch 这个域名访问elasticsearch服务
+      - elasticsearch:elasticsearch
+
+  # kibana
+  kibana:
+    image: kibana:7.13.4
+    container_name: kibana
+    ports:
+      - 5601:5601
+    privileged: true
+    links:
+      #可以用es这个域名访问elasticsearch服务
+      - elasticsearch:elasticsearch
+    depends_on:
+      - elasticsearch
+    environment:
+      #设置访问elasticsearch的地址
+      - elasticsearch.hosts=http://elasticsearch:9200
+
+
+  canal:
+    image: canal/canal-server:v1.1.5
+    container_name: canal
+    restart: always
+    ports:
+      - 11111:11111
+    volumes:
+      - ./canal/conf/example:/home/admin/canal-server/conf/example
+      - ./canal/conf/canal.properties:/home/admin/canal-server/conf/canal.properties
+      - ./canal/logs:/home/admin/canal-server/logs
+
+  # RocketMQ
+  mqnamesrv:
+    image: foxiswho/rocketmq:4.8.0
+    container_name: rocketmq-namesrv
+    restart: always
+    ports:
+      - 9876:9876
+    volumes:
+      - ./rocketmq/namesrv/logs:/home/rocketmq/logs
+      - ./rocketmq/namesrv/store:/home/rocketmq/store
+    environment:
+      JAVA_OPT_EXT: "-Duser.home=/home/rocketmq -Xms512M -Xmx512M -Xmn128m"
+    command: [ "sh","mqnamesrv" ]
+    networks:
+      rocketmq:
+        aliases:
+          - rocketmq-namesrv
+
+  mqbroker:
+    image: foxiswho/rocketmq:4.8.0
+    container_name: rocketmq-broker
+    restart: always
+    ports:
+      - 10909:10909
+      - 10911:10911
+    volumes:
+      - ./rocketmq/broker/logs:/home/rocketmq/logs
+      - ./rocketmq/broker/store:/home/rocketmq/store
+      - ./rocketmq/broker/conf/broker.conf:/etc/rocketmq/broker.conf
+    environment:
+      JAVA_OPT_EXT: "-Duser.home=/home/rocketmq -Xms512M -Xmx512M -Xmn128m"
+    command: [ "sh","mqbroker","-c","/etc/rocketmq/broker.conf","-n","rocketmq-namesrv:9876","autoCreateTopicEnable=true" ]
+    depends_on:
+      - rocketmq-namesrv
+    networks:
+      rocketmq:
+        aliases:
+          - rocketmq-broker
+
+  mqconsole:
+    image: apacherocketmq/rocketmq-dashboard:1.0.0
+    container_name: mqconsole
+    restart: always
+    ports:
+      - 9998:8080
+    environment:
+      JAVA_OPTS: -Drocketmq.namesrv.addr=mqnamesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=falses
+    depends_on:
+      - rocketmq-namesrv
+    networks:
+      rocketmq:
+        aliases:
+          - rocketmq-console
+
+
+
+networks:
+  rocketmq:
+    name: rocketmq
+    driver: bridge
