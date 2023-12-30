@@ -285,6 +285,6 @@ docker  pull nacos/nacos-server:v2.2.0
 ### 运行容器
 
 ```
-docker run --name nacos-standalone-v2.2.0 --link mysql:db -v /Users/janker/Documents/docker/nacos/conf:/home/nacos/conf -e MODE=standalone -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=db -e MYSQL_SERVICE_PORT=3306 -e MYSQL_SERVICE_DB_NAME=nacos_config -e MYSQL_SERVICE_USER=root -e MYSQL_SERVICE_PASSWORD=123456 -p 8848:8848 -p 9848:9848 -p 9849:9849 -d nacos/nacos-server:v2.2.0
+docker run --name nacos-standalone-v2.2.0 --link docker-mysql:db -v /root/docker/nacos/logs:/home/nacos/logs -v /root/docker/nacos/conf:/home/nacos/conf  -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX=512m -p 18848:8848 -p 19848:9848 -p 19849:9849 -d nacos/nacos-server:v2.2.0
 ```
 

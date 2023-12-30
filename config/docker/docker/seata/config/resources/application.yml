@@ -49,34 +49,34 @@ seata:
       #access-key:
       #secret-key:
       data-id: seataServer.properties
-    consul:
-      server-addr: 127.0.0.1:8500
-      acl-token:
-      key: seata.properties
-    apollo:
-      appId: seata-server
-      apollo-meta: http://192.168.1.204:8801
-      apollo-config-service: http://192.168.1.204:8080
-      namespace: application
-      apollo-access-key-secret:
-      cluster: seata
-    zk:
-      server-addr: 127.0.0.1:2181
-      session-timeout: 6000
-      connect-timeout: 2000
-      username:
-      password:
-      node-path: /seata/seata.properties
-    etcd3:
-      server-addr: http://localhost:2379
-      key: seata.properties
+#    consul:
+#      server-addr: 127.0.0.1:8500
+#      acl-token:
+#      key: seata.properties
+#    apollo:
+#      appId: seata-server
+#      apollo-meta: http://192.168.1.204:8801
+#      apollo-config-service: http://192.168.1.204:8080
+#      namespace: application
+#      apollo-access-key-secret:
+#      cluster: seata
+#    zk:
+#      server-addr: 127.0.0.1:2181
+#      session-timeout: 6000
+#      connect-timeout: 2000
+#      username:
+#      password:
+#      node-path: /seata/seata.properties
+#    etcd3:
+#      server-addr: http://localhost:2379
+#      key: seata.properties
   registry:
     # support: nacos 、 eureka 、 redis 、 zk  、 consul 、 etcd3 、 sofa
     type: nacos
     preferred-networks: 192.168.*
     nacos:
       application: seata-server
-      server-addr: 192.168.31.164:8848
+      server-addr: 192.168.217.10:18848
       group: SEATA_GROUP
       namespace: 
       cluster: default
@@ -86,38 +86,38 @@ seata:
       ##if use MSE Nacos with auth, mutex with username/password attribute
       #access-key:
       #secret-key:
-    eureka:
-      service-url: http://localhost:8761/eureka
-      application: default
-      weight: 1
-    redis:
-      server-addr: localhost:6379
-      db: 0
-      password:
-      cluster: default
-      timeout: 0
-    zk:
-      cluster: default
-      server-addr: 127.0.0.1:2181
-      session-timeout: 6000
-      connect-timeout: 2000
-      username:
-      password:
-    consul:
-      cluster: default
-      server-addr: 127.0.0.1:8500
-      acl-token:
-    etcd3:
-      cluster: default
-      server-addr: http://localhost:2379
-    sofa:
-      server-addr: 127.0.0.1:9603
-      application: default
-      region: DEFAULT_ZONE
-      datacenter: DefaultDataCenter
-      cluster: default
-      group: SEATA_GROUP
-      address-wait-time: 3000
+#    eureka:
+#      service-url: http://localhost:8761/eureka
+#      application: default
+#      weight: 1
+#    redis:
+#      server-addr: localhost:6379
+#      db: 0
+#      password:
+#      cluster: default
+#      timeout: 0
+#    zk:
+#      cluster: default
+#      server-addr: 127.0.0.1:2181
+#      session-timeout: 6000
+#      connect-timeout: 2000
+#      username:
+#      password:
+#    consul:
+#      cluster: default
+#      server-addr: 127.0.0.1:8500
+#      acl-token:
+#    etcd3:
+#      cluster: default
+#      server-addr: http://localhost:2379
+#    sofa:
+#      server-addr: 127.0.0.1:9603
+#      application: default
+#      region: DEFAULT_ZONE
+#      datacenter: DefaultDataCenter
+#      cluster: default
+#      group: SEATA_GROUP
+#      address-wait-time: 3000
 
   server:
     service-port: 8091 #If not configured, the default is '${server.port} + 1000'

@@ -1,13 +1,13 @@
-package top.janker.swagger2.demo;
+package top.janker.swagger3.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Swagger2DemoApplication {
+public class Swagger3DemoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Swagger2DemoApplication.class, args);
+		SpringApplication.run(Swagger3DemoApplication.class, args);
 	}
 
 }

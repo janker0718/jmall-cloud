@@ -3,13 +3,13 @@
 ## 拉取镜像
 
 ```
-docker pull foxiswho/rocketmq:4.8.0
+docker pull apache/rocketmq:4.9.7
 ```
 
 ## 创建namesrv数据存储路径
 
 ```
-mkdir -p  /Users/janker/Documents/docker/rocketmq/data/namesrv/logs   /Users/janker/Documents/docker/rocketmq/data/namesrv/store
+mkdir -p  /root/docker/rocketmq4.9.7/data/namesrv/logs   /root/docker/rocketmq4.9.7/data/namesrv/store
 ```
 
 ## 构建namesrv容器
@@ -18,11 +18,11 @@ mkdir -p  /Users/janker/Documents/docker/rocketmq/data/namesrv/logs   /Users/jan
 docker run -d \
 --restart=always \
 --name rmqnamesrv \
--p 9876:9876 \
--v /Users/janker/Documents/docker/rocketmq/data/namesrv/logs:/root/logs \
--v /Users/janker/Documents/docker/rocketmq/data/namesrv/store:/root/store \
+-p 19876:9876 \
+-v /root/docker/rocketmq4.9.7/data/namesrv/logs:/root/logs \
+-v /root/docker/rocketmq4.9.7/data/namesrv/store:/root/store \
 -e "MAX_POSSIBLE_HEAP=100000000" \
-foxiswho/rocketmq:4.8.0 \
+apache/rocketmq:4.9.7 \
 sh mqnamesrv
 ```
 
@@ -44,13 +44,13 @@ sh mqnamesrv
 ## 创建broker数据存储路径
 
 ```
-mkdir -p  /Users/janker/Documents/docker/rocketmq/data/broker/logs   /Users/janker/Documents/docker/rocketmq/data/broker/store /Users/janker/Documents/docker/rocketmq/conf
+mkdir -p /root/docker/rocketmq4.9.7/data/broker/logs   /root/docker/rocketmq4.9.7/data/broker/store //root/docker/rocketmq4.9.7/conf
 ```
 
 ## 创建配置文件
 
 ```
-vi /Users/janker/Documents/docker/rocketmq/conf/broker.conf
+vi /root/docker/rocketmq4.9.7/conf/broker.conf
 # 所属集群名称，如果节点较多可以配置多个
 brokerClusterName = DefaultCluster
 #broker名称，master和slave使用相同的名称，表明他们的主从关系
@@ -80,14 +80,14 @@ docker run -d  \
 --link rmqnamesrv:namesrv \
 -p 10911:10911 \
 -p 10909:10909 \
--v  /Users/janker/Documents/docker/rocketmq/data/broker/logs:/root/logs \
--v  /Users/janker/Documents/docker/rocketmq/data/broker/store:/root/store \
--v /Users/janker/Documents/docker/rocketmq/conf/broker.conf:/home/rocketmq/rocketmq-4.8.0/conf/broker.conf \
+-v  /root/docker/rocketmq4.9.7/data/broker/logs:/root/logs \
+-v  /root/docker/rocketmq4.9.7/data/broker/store:/root/store \
+-v /root/docker/rocketmq4.9.7/conf/broker.conf:/home/rocketmq/rocketmq-4.9.7/conf/broker.conf \
 -e "NAMESRV_ADDR=namesrv:9876" \
 -e "JAVA_OPT_EXT=-server -Xms512m -Xmx512m" \
 -e "MAX_POSSIBLE_HEAP=200000000" \
-foxiswho/rocketmq:4.8.0 \
-sh mqbroker -c /home/rocketmq/rocketmq-4.8.0/conf/broker.conf
+apache/rocketmq:4.9.7 \
+sh mqbroker -c /home/rocketmq/rocketmq-4.9.7/conf/broker.conf
 ```
 
 看到下面的启动日志就代表启动成功了。
@@ -108,7 +108,7 @@ docker pull apacherocketmq/rocketmq-dashboard:1.0.0
 docker run -d \
 --restart=always \
 --name rocketmq-console \
--e "JAVA_OPTS=-Drocketmq.namesrv.addr=192.168.31.164:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false" -p 9998:8080 apacherocketmq/rocketmq-dashboard:1.0.0
+-e "JAVA_OPTS=-Drocketmq.namesrv.addr=192.168.217.10:19876 -Dcom.rocketmq.sendMessageWithVIPChannel=false" -p 9998:8080 apacherocketmq/rocketmq-dashboard:1.0.0
 ```
 
 ## 访问控制台

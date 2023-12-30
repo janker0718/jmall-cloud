@@ -17,8 +17,8 @@ docker pull seataio/seata-server:1.6.1
 首先启动一个用户将resources目录文件拷出的临时容器
 
 ```
-docker run -d -p 8091:8091 -p 7091:7091  --name seata-server seataio/seata-server:1.6.1
-docker cp seata-server:/seata-server/resources /Users/janker/Documents/docker/seata/config
+docker run -d -p 18091:8091 -p 17091:7091  --name seata-server seataio/seata-server:1.6.1
+docker cp seata-server:/seata-server/resources /root/docker/seata/config
 ```
 
 ## 临时容器停止及销毁
@@ -35,11 +35,11 @@ docker cp seata-server:/seata-server/resources /Users/janker/Documents/docker/se
 
 ```shell
 docker run --name seata-server \
--p 8091:8091 \
--p 7091:7091 \
--v /Users/janker/Documents/docker/seata/config/resources:/seata-server/resources  \
--e SEATA_IP=192.168.31.164 \
--e SEATA_PORT=8091 \
+-p 18091:8091 \
+-p 17091:7091 \
+-v /root/docker/seata/config/resources:/seata-server/resources  \
+-e SEATA_IP=192.168.217.12 \
+-e SEATA_PORT=18091 \
 -d seataio/seata-server:1.6.1
 ```
 
