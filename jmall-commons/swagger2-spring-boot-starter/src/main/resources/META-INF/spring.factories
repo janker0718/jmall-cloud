@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-top.janker.common.swagger2.SwaggerAutoConfiguration

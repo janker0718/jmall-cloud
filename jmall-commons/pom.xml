@@ -14,12 +14,11 @@
     <modules>
         <module>commons-core</module>
         <module>redis-spring-boot-starter</module>
-        <module>swagger2-spring-boot-starter</module>
     </modules>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
