@@ -39,7 +39,7 @@ seata:
     # support: nacos 、 consul 、 apollo 、 zk  、 etcd3
     type: nacos
     nacos:
-      server-addr: 192.168.31.164:8848
+      server-addr: 192.168.217.10:18848
       namespace: 
       group: SEATA_GROUP
       username: nacos
@@ -86,38 +86,38 @@ seata:
       ##if use MSE Nacos with auth, mutex with username/password attribute
       #access-key:
       #secret-key:
-#    eureka:
-#      service-url: http://localhost:8761/eureka
-#      application: default
-#      weight: 1
-#    redis:
-#      server-addr: localhost:6379
-#      db: 0
-#      password:
-#      cluster: default
-#      timeout: 0
-#    zk:
-#      cluster: default
-#      server-addr: 127.0.0.1:2181
-#      session-timeout: 6000
-#      connect-timeout: 2000
-#      username:
-#      password:
-#    consul:
-#      cluster: default
-#      server-addr: 127.0.0.1:8500
-#      acl-token:
-#    etcd3:
-#      cluster: default
-#      server-addr: http://localhost:2379
-#    sofa:
-#      server-addr: 127.0.0.1:9603
-#      application: default
-#      region: DEFAULT_ZONE
-#      datacenter: DefaultDataCenter
-#      cluster: default
-#      group: SEATA_GROUP
-#      address-wait-time: 3000
+    eureka:
+      service-url: http://localhost:8761/eureka
+      application: default
+      weight: 1
+    redis:
+      server-addr: localhost:6379
+      db: 0
+      password:
+      cluster: default
+      timeout: 0
+    zk:
+      cluster: default
+      server-addr: 127.0.0.1:2181
+      session-timeout: 6000
+      connect-timeout: 2000
+      username:
+      password:
+    consul:
+      cluster: default
+      server-addr: 127.0.0.1:8500
+      acl-token:
+    etcd3:
+      cluster: default
+      server-addr: http://localhost:2379
+    sofa:
+      server-addr: 127.0.0.1:9603
+      application: default
+      region: DEFAULT_ZONE
+      datacenter: DefaultDataCenter
+      cluster: default
+      group: SEATA_GROUP
+      address-wait-time: 3000
 
   server:
     service-port: 8091 #If not configured, the default is '${server.port} + 1000'
@@ -142,7 +142,7 @@ seata:
       enable-branch-async-remove: false #enable to asynchronous remove branchSession
   store:
     # support: file 、 db 、 redis
-    mode: file
+    mode: db
     session:
       mode: file
     lock:
@@ -158,7 +158,7 @@ seata:
       datasource: druid
       db-type: mysql
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/seata?rewriteBatchedStatements=true
+      url: jdbc:mysql://192.168.217.10:13306/seata?rewriteBatchedStatements=true
       user: mysql
       password: mysql
       min-conn: 10
